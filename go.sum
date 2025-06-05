@@ -1,0 +1,8 @@
+github.com/echo-webkom/cenv v1.12.1 h1:Lzr9s8NzDq63TiRTEBYHMJRZ+l2Iq0GTPI/GIjznCaE=
+github.com/echo-webkom/cenv v1.12.1/go.mod h1:qCDFjnypg03McDVq+xBfQKnAAa5FAOI9F4RuTPau7sA=
+github.com/jesperkha/gokenizer v1.1.1 h1:ZCKrsPBQqcXvCcMfL7kEPTDCCU1iinRtTqpF0koADe0=
+github.com/jesperkha/gokenizer v1.1.1/go.mod h1:I9umBgWNkYZEUv255HFQOf4Q7Ao70uaFs9fyYFWrYjU=
+github.com/jesperkha/notifier v1.0.0 h1:yMuLeMPtZ893xohJAwC1IRVepQG7Yn0VbvKyZrNf2DE=
+github.com/jesperkha/notifier v1.0.0/go.mod h1:EDDeOr64fV42vUXuP3/YOJVewd33nnOhSG1IyHJK3i4=
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
