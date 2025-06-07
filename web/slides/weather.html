@@ -1,0 +1,67 @@
+<div id="weather-slide" class="h-screen w-screen flex flex-col justify-center items-center text-white text-center p-6">
+	<div id="weather-emoji" class="text-6xl mb-3">⛅</div>
+	<div id="location" class="text-xl font-medium mb-2">Fetching location...</div>
+	<div id="temp" class="text-5xl font-bold mb-2">--°C</div>
+	<div id="desc" class="text-2xl">--</div>
+
+	<script>
+		const descriptions = {
+			0: ["Clear", "☀️", "bg-gradient-to-b from-sky-400 to-blue-600"],
+			1: ["Mostly Clear", "🌤", "bg-gradient-to-b from-blue-300 to-sky-600"],
+			2: ["Partly Cloudy", "⛅", "bg-gradient-to-b from-gray-200 to-gray-500"],
+			3: ["Overcast", "☁️", "bg-gradient-to-b from-gray-400 to-gray-700"],
+			45: ["Fog", "🌫", "bg-gradient-to-b from-gray-300 to-gray-500"],
+			48: ["Rime Fog", "🌁", "bg-gradient-to-b from-gray-300 to-gray-500"],
+			51: ["Light Drizzle", "🌦", "bg-gradient-to-b from-gray-400 to-gray-700"],
+			53: ["Moderate Drizzle", "🌧", "bg-gradient-to-b from-gray-600 to-gray-900"],
+			55: ["Heavy Drizzle", "🌧", "bg-gradient-to-b from-gray-700 to-black"],
+			61: ["Light Rain", "🌦", "bg-gradient-to-b from-gray-500 to-gray-800"],
+			63: ["Moderate Rain", "🌧", "bg-gradient-to-b from-gray-700 to-black"],
+			65: ["Heavy Rain", "🌧", "bg-gradient-to-b from-gray-800 to-black"],
+			71: ["Light Snow", "🌨", "bg-gradient-to-b from-slate-200 to-slate-400"],
+			73: ["Moderate Snow", "❄️", "bg-gradient-to-b from-white to-slate-300"],
+			75: ["Heavy Snow", "❄️", "bg-gradient-to-b from-slate-300 to-gray-500"],
+			95: ["Thunderstorm", "🌩", "bg-gradient-to-b from-purple-800 to-black"],
+			99: ["Severe Thunderstorm", "⛈", "bg-gradient-to-b from-purple-900 to-black"],
+		}
+
+		async function getWeather(lat, lon) {
+			const weatherRes = await fetch(
+				`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+			)
+			const weatherData = await weatherRes.json()
+			const { temperature, weathercode } = weatherData.current_weather
+
+			const slide = document.getElementById("weather-slide")
+			const [text, emoji, bgClass] = descriptions[weathercode] || ["Unknown", "❓", "bg-gray-800"]
+			document.getElementById("temp").textContent = `${temperature}°C`
+			document.getElementById("desc").textContent = text
+			document.getElementById("weather-emoji").textContent = emoji
+
+			// Clear old bg classes and apply new one
+			slide.className = `h-screen w-screen flex flex-col justify-center items-center text-white text-center p-6 ${bgClass}`
+		}
+
+		async function reverseGeocode(lat, lon) {
+			const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+			const geoData = await geoRes.json()
+			const city =
+				geoData.address.city || geoData.address.town || geoData.address.village || geoData.address.state || "Your Area"
+			document.getElementById("location").textContent = city
+		}
+
+		function onLocationSuccess(pos) {
+			const { latitude, longitude } = pos.coords
+			getWeather(latitude, longitude)
+			reverseGeocode(latitude, longitude)
+		}
+
+		function onLocationError(err) {
+			document.getElementById("location").textContent = "Location unavailable"
+			document.getElementById("desc").textContent = "Check permissions"
+			document.getElementById("emoji").textContent = "❌"
+		}
+
+		navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError)
+	</script>
+</div>

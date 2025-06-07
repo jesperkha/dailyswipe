@@ -4,6 +4,9 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"text/template"
 
 	"github.com/jesperkha/dailyswipe/config"
 	"github.com/jesperkha/notifier"
@@ -19,6 +22,10 @@ type Server struct {
 // returns the status code after handling the request.
 type Handler func(ctx *Context) int
 
+type Slide struct {
+	Content string
+}
+
 func New(config *config.Config) *Server {
 	mux := http.NewServeMux()
 	s := &Server{
@@ -28,7 +35,24 @@ func New(config *config.Config) *Server {
 	}
 
 	s.handle("/", func(ctx *Context) int {
-		ctx.File("web/index.html")
+		files, err := filepath.Glob("web/slides/*.html")
+		if err != nil {
+			return http.StatusInternalServerError
+		}
+
+		var slides []string
+		for _, file := range files {
+			b, err := os.ReadFile(file)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			slides = append(slides, string(b))
+		}
+
+		tmpl := template.Must(template.ParseFiles("web/index.html"))
+		tmpl.Execute(ctx.w, slides)
 		return http.StatusOK
 	})
 

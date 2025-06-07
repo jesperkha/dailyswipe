@@ -1,3 +1,1 @@
 # Daily Swipe
-
-

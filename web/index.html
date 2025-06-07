@@ -3,13 +3,76 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>My app</title>
-		<script src="https://unpkg.com/htmx.org@1.9.2"></script>
-		<script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/methods.js"></script>
-		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+		<title>Slide Feed</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Quicksand:wght@500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			.digital {
+				font-family: "Orbitron", monospace;
+			}
+			.rounded {
+				font-family: "Quicksand", sans-serif;
+				font-weight: 200;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				overscroll-behavior: none;
+			}
+		</style>
 	</head>
-	<style></style>
-	<body>
-		<p class="text-xl">Hello world!</p>
+	<body class="bg-black text-white overflow-hidden">
+		<div id="container" class="h-screen w-screen relative transition-transform duration-300 ease-in-out">
+			{{range $i, $s := .}}
+			<div
+				class="absolute top-0 left-0 h-screen w-full transition-opacity duration-300"
+				style="transform: translateY({{$i}}00%);"
+			>
+				{{$s}}
+			</div>
+			{{end}}
+		</div>
+
+		<script>
+			const container = document.getElementById('container');
+			const totalSlides = {{len .}};
+			let currentSlide = 0;
+			let isScrolling = false;
+
+			function scrollToSlide(index) {
+			  if (index < 0 || index >= totalSlides) return;
+			  isScrolling = true;
+			  container.style.transform = `translateY(-${index * 100}vh)`;
+			  currentSlide = index;
+			  setTimeout(() => { isScrolling = false; }, 300); // match CSS transition
+			}
+
+			// Handle touch (mobile)
+			let startY = null;
+
+			window.addEventListener('touchstart', (e) => {
+			  startY = e.touches[0].clientY;
+			});
+
+			window.addEventListener('touchend', (e) => {
+			  if (startY === null) return;
+			  const deltaY = e.changedTouches[0].clientY - startY;
+			  if (Math.abs(deltaY) > 50 && !isScrolling) {
+			    if (deltaY < 0) scrollToSlide(currentSlide + 1); // swipe up
+			    else scrollToSlide(currentSlide - 1);             // swipe down
+			  }
+			  startY = null;
+			});
+
+			// Handle mouse wheel (for dev/testing)
+			window.addEventListener('wheel', (e) => {
+			  if (isScrolling) return;
+			  if (e.deltaY > 50) scrollToSlide(currentSlide + 1);
+			  else if (e.deltaY < -50) scrollToSlide(currentSlide - 1);
+			});
+		</script>
 	</body>
 </html>
