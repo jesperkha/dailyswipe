@@ -50,18 +50,9 @@
 			document.getElementById("location").textContent = city
 		}
 
-		function onLocationSuccess(pos) {
-			const { latitude, longitude } = pos.coords
-			getWeather(latitude, longitude)
-			reverseGeocode(latitude, longitude)
-		}
-
-		function onLocationError(err) {
-			document.getElementById("location").textContent = "Location unavailable"
-			document.getElementById("desc").textContent = "Check permissions"
-			document.getElementById("emoji").textContent = "❌"
-		}
-
-		navigator.geolocation.getCurrentPosition(onLocationSuccess, onLocationError)
+		const latitude = 60.4121
+		const longitude = 5.32
+		getWeather(latitude, longitude)
+		reverseGeocode(latitude, longitude)
 	</script>
 </div>
